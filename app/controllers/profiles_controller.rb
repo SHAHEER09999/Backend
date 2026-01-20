@@ -1,5 +1,6 @@
 class ProfilesController < ApplicationController
   before_action :set_profile, only: %i[ show update destroy ]
+  before_action :authenticate_user!
 
   # GET /profiles
   def index
@@ -10,12 +11,14 @@ class ProfilesController < ApplicationController
 
   # GET /profiles/1
   def show
-    render json: @profile
+    profile = Profile.includes(:social_accounts).find(params[:id])
+    render json: profile, include: :social_accounts
   end
+
 
   # POST /profiles
   def create
-    @profile = Profile.new(profile_params)
+    @profile = Profile.new(profile_params.merge(user_id: current_user.id))
 
     if @profile.save
       render json: @profile, status: :created, location: @profile

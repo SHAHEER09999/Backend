@@ -1,6 +1,6 @@
 class SocialAccountsController < ApplicationController
   before_action :set_social_account, only: %i[ show update destroy ]
-
+  before_action :authenticate_user!
   # GET /social_accounts
   def index
     @social_accounts = SocialAccount.all
