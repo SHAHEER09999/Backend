@@ -21,7 +21,7 @@ class ProfilesController < ApplicationController
     @profile = Profile.new(profile_params.merge(user_id: current_user.id))
 
     if @profile.save
-      render json: @profile, status: :created, location: @profile
+      render json: profile_response(@profile), status: :created, location: @profile
     else
       render json: @profile.errors, status: :unprocessable_content
     end
@@ -38,6 +38,7 @@ class ProfilesController < ApplicationController
 
   # DELETE /profiles/1
   def destroy
+    @profile = current_user.profile
     @profile.destroy!
   end
 
@@ -50,5 +51,10 @@ class ProfilesController < ApplicationController
     # Only allow a list of trusted parameters through.
     def profile_params
       params.expect(profile: [ :name, :image, :description, :location_website ])
+    end
+    def profile_response(profile)
+      profile.as_json.merge(
+        image_url: profile.image.attached? ? url_for(profile.image) : nil
+      )
     end
 end

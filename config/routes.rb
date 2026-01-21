@@ -1,11 +1,12 @@
 Rails.application.routes.draw do
-  devise_for :users, controllers: {
+    devise_for :users, controllers: {
     sessions: 'users/sessions',
     registrations: 'users/registrations'
   }
 
   resources :profiles do
     resources :social_accounts
+    resources :categories
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
