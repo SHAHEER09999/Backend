@@ -49,6 +49,6 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 end
 
-gem "devise", "~> 4.9"
+gem "devise", "~> 5.0"
 gem 'rack-cors'
 gem 'devise-jwt'
