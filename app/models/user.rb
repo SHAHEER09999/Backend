@@ -2,6 +2,9 @@ class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
   has_one :profile, dependent: :destroy
+
+  enum :role, [ :admin, :brand, :influencer ]
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
