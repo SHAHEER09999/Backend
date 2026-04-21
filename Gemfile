@@ -52,3 +52,5 @@ end
 gem "devise", "~> 4.9"
 gem 'rack-cors'
 gem 'devise-jwt'
+
+gem "dotenv-rails", "~> 3.2"

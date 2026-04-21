@@ -7,10 +7,16 @@ class Users::SessionsController < Devise::SessionsController
   private
 
   def respond_with(resource, _opts = {})
-    render json: {
-      message: 'Logged in sucessfully.',
-      data: resource
-    }, status: :ok
+    if !resource.confirmed?
+      render json: {
+        error: "Please confirm your email first."
+      }, status: :unauthorized
+    else
+      render json: {
+        message: 'Logged in successfully.',
+        data: resource
+      }, status: :ok
+    end
   end
 
   def respond_to_on_destroy

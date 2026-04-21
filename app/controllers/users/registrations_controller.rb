@@ -8,10 +8,17 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   def respond_with(resource, _opts = {})
     if request.method == "POST" && resource.persisted?
-      render json: {
-        message: "Signed up sucessfully.",
-        data: resource
-      }, status: :ok
+      if resource.confirmed?
+        render json: {
+          message: "Signed up successfully.",
+          data: resource
+        }, status: :ok
+      else
+        render json: {
+          message: "Signed up successfully. Please confirm your email.",
+          data: resource.email
+        }, status: :ok
+      end
     elsif request.method == "DELETE"
       render json: {
         message: "Account deleted successfully."
