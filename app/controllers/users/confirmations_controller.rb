@@ -1,13 +1,11 @@
 class Users::ConfirmationsController < Devise::ConfirmationsController
-  respond_to :json
-
   def show
     user = User.confirm_by_token(params[:confirmation_token])
 
     if user.errors.empty?
-      render json: { message: "Email confirmed successfully" }, status: :ok
+      redirect_to "http://localhost:5173/email-confirmed?verified=true"
     else
-      render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
+      redirect_to "http://localhost:5173/email-confirmed?verified=false"
     end
   end
 end
