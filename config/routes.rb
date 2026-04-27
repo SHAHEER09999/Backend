@@ -1,21 +1,19 @@
 Rails.application.routes.draw do
-    devise_for :users, controllers: {
+
+  devise_for :users, controllers: {
     sessions: 'users/sessions',
     registrations: 'users/registrations',
-    confirmations: 'users/confirmations'   ,
-    passwords: 'users/passwords'   
-
+    confirmations: 'users/confirmations',
+    passwords: 'users/passwords'
   }
+
+  # 👇 ADD THESE ROUTES HERE (IMPORTANT)
+  post "users/request_delete", to: "users/deletions#request_delete"
+  get "users/delete_account", to: "users/deletions#confirm_delete"
 
   resources :profiles do
     resources :social_accounts
     resources :categories
   end
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
-
-  # Defines the root path route ("/")
-  # root "posts#index"
 end

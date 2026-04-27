@@ -11,4 +11,21 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :confirmable,
          :jwt_authenticatable, jwt_revocation_strategy: self
+
+
+
+  # For account deletion
+  def generate_delete_token
+    self.delete_token = SecureRandom.urlsafe_base64
+    self.delete_sent_at = Time.current
+    save!
+  end
+
+  def delete_token_valid?(token)
+    return false if delete_token != token
+    return false if delete_sent_at < 15.minutes.ago
+    true
+  end
 end
+
+
