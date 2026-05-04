@@ -14,7 +14,11 @@ class Users::SessionsController < Devise::SessionsController
     else
       render json: {
         message: 'Logged in successfully.',
-        data: resource
+        data: {
+          id: resource.id,
+          email: resource.email,
+          role: resource.role
+        }
       }, status: :ok
     end
   end

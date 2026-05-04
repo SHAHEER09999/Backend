@@ -14,6 +14,12 @@ class User < ApplicationRecord
 
 
 
+
+  def after_confirmation
+    super  # ✅ VERY IMPORTANT
+
+    create_profile_after_confirmation
+  end
   # For account deletion
   def generate_delete_token
     self.delete_token = SecureRandom.urlsafe_base64
@@ -25,6 +31,15 @@ class User < ApplicationRecord
     return false if delete_token != token
     return false if delete_sent_at < 15.minutes.ago
     true
+  end
+
+  def create_profile_after_confirmation
+    return if admin?
+    return if profile.present?
+
+    create_profile!(
+      name: email.split("@").first
+    )
   end
 end
 

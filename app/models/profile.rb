@@ -4,4 +4,5 @@ class Profile < ApplicationRecord
   has_many :categories, dependent: :destroy
 
   has_one_attached :image
+  validates :user_id, uniqueness: true
 end
