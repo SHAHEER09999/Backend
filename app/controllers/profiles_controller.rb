@@ -1,5 +1,5 @@
 class ProfilesController < ApplicationController
-  before_action :set_profile, only: %i[ show update destroy ]
+  before_action :set_profile, only: %i[  destroy ]
   before_action :authenticate_user!
 
   # GET /profiles
@@ -9,10 +9,14 @@ class ProfilesController < ApplicationController
     render json: @profiles
   end
 
-  # GET /profiles/1
   def show
-    profile = Profile.includes(:social_accounts).find(params[:id])
-    render json: profile, include: :social_accounts
+    profile = current_user.profile
+
+    render json: profile.as_json(
+      include: [:social_accounts, :categories]
+    ).merge(
+      image_url: profile.image.attached? ? url_for(profile.image) : nil
+    )
   end
 
 
@@ -29,8 +33,22 @@ class ProfilesController < ApplicationController
 
   # PATCH/PUT /profiles/1
   def update
+    @profile = current_user.profile
+
     if @profile.update(profile_params)
-      render json: @profile
+      
+      # ✅ Update categories (replace old ones)
+      if params[:categories].present?
+        @profile.categories.destroy_all
+
+        params[:categories].values.each do |cat|
+          next unless Category.categories.keys.include?(cat)
+
+          @profile.categories.create!(categories: cat)
+        end
+      end
+
+      render json: profile_response(@profile)
     else
       render json: @profile.errors, status: :unprocessable_content
     end
@@ -53,7 +71,7 @@ class ProfilesController < ApplicationController
       params.expect(profile: [ :name, :image, :description, :location_website ])
     end
     def profile_response(profile)
-      profile.as_json.merge(
+      profile.as_json(include: :categories).merge(
         image_url: profile.image.attached? ? url_for(profile.image) : nil
       )
     end

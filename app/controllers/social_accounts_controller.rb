@@ -14,16 +14,42 @@ class SocialAccountsController < ApplicationController
   end
 
   # POST /social_accounts
-  def create
-    profile = Profile.find(params[:profile_id])
+  def verify_and_create
+    return render json: { error: "Only influencers can add social accounts" }, status: :forbidden unless current_user.influencer?
 
-    social_account = profile.social_accounts.build(social_account_params)
+    profile = current_user.profile
+    return render json: { error: "Profile not found" }, status: :not_found unless profile
 
-    if social_account.save
-      render json: social_account, status: :created
-    else
-      render json: social_account.errors, status: :unprocessable_entity
+    platform = params[:platform]
+    username = params[:username]
+
+    unless platform == "youtube"
+      return render json: { error: "Only YouTube is supported currently" }, status: :unprocessable_entity
     end
+
+    result = YoutubeService.verify(username)
+
+    unless result[:success]
+      return render json: { error: result[:error] }, status: :unprocessable_entity
+    end
+
+    social_account = profile.social_accounts.find_or_initialize_by(platform: :youtube)
+
+    social_account.username = result[:username]
+    social_account.followers = result[:followers]
+
+    social_account.save!
+
+    render json: {
+      message: "YouTube account verified successfully",
+      social_account: {
+        id: social_account.id,
+          platform: social_account.platform,
+          username: social_account.username,
+          followers: social_account.followers,
+          title: result[:title]
+        }
+      }, status: :ok
   end
 
 

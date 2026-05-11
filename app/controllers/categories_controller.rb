@@ -39,6 +39,10 @@ class CategoriesController < ApplicationController
   def destroy
     @category.destroy!
   end
+   # GET /categories/options
+  def options
+    render json: Category.categories.keys
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.

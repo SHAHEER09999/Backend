@@ -54,3 +54,4 @@ gem 'rack-cors'
 gem 'devise-jwt'
 
 gem "dotenv-rails", "~> 3.2"
+gem "httparty"
