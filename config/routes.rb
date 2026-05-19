@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   resources :profiles do
     resources :social_accounts
     resources :categories
+    resources :bank_accounts
   end
   post "/social_accounts/verify_and_create", to: "social_accounts#verify_and_create"
   get "/categories/options", to: "categories#options"

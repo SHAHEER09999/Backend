@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_25_183656) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_18_193222) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_25_183656) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "bank_accounts", force: :cascade do |t|
+    t.string "account_name"
+    t.string "account_number"
+    t.datetime "created_at", null: false
+    t.bigint "profile_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["profile_id"], name: "index_bank_accounts_on_profile_id"
   end
 
   create_table "categories", force: :cascade do |t|
@@ -94,6 +103,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_25_183656) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "bank_accounts", "profiles"
   add_foreign_key "categories", "profiles"
   add_foreign_key "profiles", "users", on_delete: :cascade
   add_foreign_key "social_accounts", "profiles"
