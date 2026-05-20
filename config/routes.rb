@@ -18,6 +18,10 @@ Rails.application.routes.draw do
     resources :social_accounts
     resources :categories
     resources :bank_accounts
+    resources :campaigns
+  end
+  resources :campaigns, only: [:index, :show, :update, :destroy] do
+    resources :campaign_applications, only: [:create, :destroy]
   end
   post "/social_accounts/verify_and_create", to: "social_accounts#verify_and_create"
   get "/categories/options", to: "categories#options"

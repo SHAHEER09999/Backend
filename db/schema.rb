@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_18_193222) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_20_011155) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -49,6 +49,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_18_193222) do
     t.bigint "profile_id", null: false
     t.datetime "updated_at", null: false
     t.index ["profile_id"], name: "index_bank_accounts_on_profile_id"
+  end
+
+  create_table "campaign_applications", force: :cascade do |t|
+    t.bigint "campaign_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "profile_id", null: false
+    t.integer "status", default: 0
+    t.datetime "updated_at", null: false
+    t.index ["campaign_id", "profile_id"], name: "index_campaign_applications_on_campaign_id_and_profile_id", unique: true
+    t.index ["campaign_id"], name: "index_campaign_applications_on_campaign_id"
+    t.index ["profile_id"], name: "index_campaign_applications_on_profile_id"
+  end
+
+  create_table "campaigns", force: :cascade do |t|
+    t.decimal "budget", precision: 10, scale: 2
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name"
+    t.integer "platform"
+    t.bigint "profile_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["profile_id"], name: "index_campaigns_on_profile_id"
   end
 
   create_table "categories", force: :cascade do |t|
@@ -104,6 +126,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_18_193222) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "bank_accounts", "profiles"
+  add_foreign_key "campaign_applications", "campaigns"
+  add_foreign_key "campaign_applications", "profiles"
+  add_foreign_key "campaigns", "profiles"
   add_foreign_key "categories", "profiles"
   add_foreign_key "profiles", "users", on_delete: :cascade
   add_foreign_key "social_accounts", "profiles"
