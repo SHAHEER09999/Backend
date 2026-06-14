@@ -48,6 +48,7 @@ class SocialAccountsController < ApplicationController
     social_account = profile.social_accounts.find_or_initialize_by(platform: :youtube)
     social_account.username = result[:username]
     social_account.followers = result[:followers]
+    social_account.price = params[:price]
     social_account.save!
 
     render json: {
@@ -98,7 +99,8 @@ class SocialAccountsController < ApplicationController
       params.require(:social_account).permit(
         :platform,
         :username,
-        :followers
+        :followers,
+        :price
       )
     end
 end

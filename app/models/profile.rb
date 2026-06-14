@@ -6,6 +6,11 @@ class Profile < ApplicationRecord
   has_one_attached :image
   validates :user_id, uniqueness: true
   has_many :meeting_responses, dependent: :destroy
+  enum :gender, {
+    male: 0,
+    female: 1,
+    other: 2
+  }
 
   has_many :campaigns, dependent: :destroy
   has_many :campaign_applications, dependent: :destroy

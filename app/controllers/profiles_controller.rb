@@ -68,7 +68,7 @@ class ProfilesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def profile_params
-      params.expect(profile: [ :name, :image, :description, :location_website ])
+      params.expect(profile: [ :name, :image, :description, :location_website, :language, :gender, :age, :delivery_time ])
     end
     def profile_response(profile)
       profile.as_json(include: :categories).merge(
