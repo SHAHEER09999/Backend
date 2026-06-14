@@ -1,6 +1,7 @@
 class Campaign < ApplicationRecord
   belongs_to :profile
-
+  
+  has_many :meetings, dependent: :destroy
   has_many :campaign_applications, dependent: :destroy
   has_many :applicants,
            through: :campaign_applications,
@@ -9,9 +10,7 @@ class Campaign < ApplicationRecord
   enum :platform, {
     instagram: 0,
     youtube: 1,
-    tiktok: 2,
-    facebook: 3,
-    twitter: 4
+    tiktok: 2
   }
 
   validates :name, presence: true

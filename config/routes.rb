@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  namespace :api do
+    namespace :admin do
+      resources :users, only: [:index, :destroy]
+    end
+  end
+  resources :admin_user_managements
 
   devise_for :users, controllers: {
     sessions: 'users/sessions',
@@ -19,9 +25,13 @@ Rails.application.routes.draw do
     resources :categories
     resources :bank_accounts
     resources :campaigns
+    resources :meetings
   end
   resources :campaigns, only: [:index, :show, :update, :destroy] do
     resources :campaign_applications, only: [:create, :destroy]
+  end
+  resources :meetings, only: [:index, :create, :destroy] do
+    post :respond, to: 'meeting_responses#respond'
   end
   post "/social_accounts/verify_and_create", to: "social_accounts#verify_and_create"
   get "/categories/options", to: "categories#options"

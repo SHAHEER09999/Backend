@@ -5,6 +5,7 @@ class Profile < ApplicationRecord
   has_many :bank_accounts, dependent: :destroy
   has_one_attached :image
   validates :user_id, uniqueness: true
+  has_many :meeting_responses, dependent: :destroy
 
   has_many :campaigns, dependent: :destroy
   has_many :campaign_applications, dependent: :destroy

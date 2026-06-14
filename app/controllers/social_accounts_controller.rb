@@ -14,11 +14,9 @@ class SocialAccountsController < ApplicationController
     render json: @social_account
   end
 
-  # 🛠️ ADD THIS METHOD: POST /profiles/:profile_id/social_accounts
+  # POST /profiles/:profile_id/social_accounts
   def create
-    return render json: { error: "Only influencers can add social accounts" }, status: :forbidden unless current_user.influencer?
-
-    # Build the record off the scoped profile resource parameters
+    # 🔓 REMOVED ROLE GUARD: Both Brands and Influencers can now save manual social links
     @social_account = @profile.social_accounts.new(social_account_params)
 
     if @social_account.save
@@ -30,8 +28,7 @@ class SocialAccountsController < ApplicationController
 
   # POST /social_accounts/verify_and_create
   def verify_and_create
-    return render json: { error: "Only influencers can add social accounts" }, status: :forbidden unless current_user.influencer?
-
+    # 🔓 REMOVED ROLE GUARD: Both Brands and Influencers can verify YouTube channels
     profile = current_user.profile
     return render json: { error: "Profile not found" }, status: :not_found unless profile
 

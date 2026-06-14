@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_20_011155) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_20_065335) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_20_011155) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "admin_user_managements", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_admin_user_managements_on_user_id"
   end
 
   create_table "bank_accounts", force: :cascade do |t|
@@ -79,6 +86,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_20_011155) do
     t.bigint "profile_id", null: false
     t.datetime "updated_at", null: false
     t.index ["profile_id"], name: "index_categories_on_profile_id"
+  end
+
+  create_table "meeting_responses", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "meeting_id", null: false
+    t.bigint "profile_id", null: false
+    t.text "reason"
+    t.integer "status"
+    t.datetime "updated_at", null: false
+    t.index ["meeting_id"], name: "index_meeting_responses_on_meeting_id"
+    t.index ["profile_id"], name: "index_meeting_responses_on_profile_id"
+  end
+
+  create_table "meetings", force: :cascade do |t|
+    t.bigint "campaign_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "date_time"
+    t.string "location_link"
+    t.integer "meeting_type"
+    t.text "notes"
+    t.datetime "updated_at", null: false
+    t.index ["campaign_id"], name: "index_meetings_on_campaign_id"
   end
 
   create_table "profiles", force: :cascade do |t|
@@ -125,11 +154,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_20_011155) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "admin_user_managements", "users"
   add_foreign_key "bank_accounts", "profiles"
   add_foreign_key "campaign_applications", "campaigns"
   add_foreign_key "campaign_applications", "profiles"
   add_foreign_key "campaigns", "profiles"
   add_foreign_key "categories", "profiles"
+  add_foreign_key "meeting_responses", "meetings"
+  add_foreign_key "meeting_responses", "profiles"
+  add_foreign_key "meetings", "campaigns"
   add_foreign_key "profiles", "users", on_delete: :cascade
   add_foreign_key "social_accounts", "profiles"
 end
