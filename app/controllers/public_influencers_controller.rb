@@ -77,6 +77,35 @@ class PublicInfluencersController < ApplicationController
     }
   end
 
+  def show
+    profile = Profile.find(params[:id])
+
+    # 1. Fetch the last 5 feedbacks
+    feedbacks = profile.received_feedbacks
+                      .includes(:brand_profile)
+                      .order(created_at: :desc)
+                      .limit(5)
+
+    # 2. Render JSON including the reviews exactly like we did in ProfilesController
+    render json: profile.as_json(
+      include: [:social_accounts, :categories]
+    ).merge(
+      image_url: profile.image.attached? ? url_for(profile.image) : nil,
+      
+      average_rating: profile.average_rating,
+      total_feedbacks: profile.total_feedbacks,
+
+      # ✅ THIS SENDS THE REVIEWS TO THE FRONTEND
+      reviews: feedbacks.map do |f|
+        {
+          id: f.id,
+          user_name: f.brand_profile&.name || "Unknown User",
+          comment: f.comment,
+          created_at: f.created_at
+        }
+      end
+    )
+  end
   def filters
     render json: {
       categories: Category.distinct.pluck(:categories),

@@ -9,13 +9,35 @@ class ProfilesController < ApplicationController
     render json: @profiles
   end
   def show
-    profile = current_user.profile
+    # ✅ FIX: Use params[:id] if it exists, otherwise fallback to the logged-in user's profile
+    profile = params[:id].present? ? Profile.find(params[:id]) : current_user.profile
+
+    # Safety check just in case the user hasn't created a profile yet
+    if profile.nil?
+      return render json: { error: "Profile not found" }, status: :not_found
+    end
+
+    feedbacks = profile.received_feedbacks
+                      .includes(:brand_profile)
+                      .order(created_at: :desc)
+                      .limit(5)
 
     render json: profile.as_json(
       include: [:social_accounts, :categories]
     ).merge(
       image_url: profile.image.attached? ? url_for(profile.image) : nil,
-      user_role: current_user.role 
+
+      average_rating: profile.average_rating,
+      total_feedbacks: profile.total_feedbacks,
+
+      reviews: feedbacks.map do |f|
+        {
+          id: f.id,
+          user_name: f.brand_profile&.name || "Unknown User", # added safe navigation (&.) just in case
+          comment: f.comment,
+          created_at: f.created_at
+        }
+      end
     )
   end
 
@@ -72,7 +94,11 @@ class ProfilesController < ApplicationController
     end
     def profile_response(profile)
       profile.as_json(include: :categories).merge(
-        image_url: profile.image.attached? ? url_for(profile.image) : nil
+        image_url: profile.image.attached? ? url_for(profile.image) : nil,
+
+        # ✅ STEP 12: Feedback stats added
+        average_rating: profile.average_rating,
+        total_feedbacks: profile.total_feedbacks
       )
     end
 end

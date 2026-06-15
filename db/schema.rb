@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_14_200249) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_15_215050) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -88,6 +88,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_14_200249) do
     t.index ["profile_id"], name: "index_categories_on_profile_id"
   end
 
+  create_table "feedbacks", force: :cascade do |t|
+    t.bigint "brand_profile_id", null: false
+    t.text "comment"
+    t.datetime "created_at", null: false
+    t.bigint "profile_id", null: false
+    t.integer "rating"
+    t.datetime "updated_at", null: false
+    t.index ["brand_profile_id"], name: "index_feedbacks_on_brand_profile_id"
+    t.index ["profile_id", "brand_profile_id"], name: "index_feedbacks_on_profile_id_and_brand_profile_id", unique: true
+    t.index ["profile_id"], name: "index_feedbacks_on_profile_id"
+  end
+
   create_table "meeting_responses", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "meeting_id", null: false
@@ -122,6 +134,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_14_200249) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_profiles_on_user_id"
+  end
+
+  create_table "reports", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.bigint "reported_profile_id", null: false
+    t.bigint "reporter_profile_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reported_profile_id"], name: "index_reports_on_reported_profile_id"
+    t.index ["reporter_profile_id"], name: "index_reports_on_reporter_profile_id"
   end
 
   create_table "social_accounts", force: :cascade do |t|
@@ -165,9 +187,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_14_200249) do
   add_foreign_key "campaign_applications", "profiles"
   add_foreign_key "campaigns", "profiles"
   add_foreign_key "categories", "profiles"
+  add_foreign_key "feedbacks", "profiles"
+  add_foreign_key "feedbacks", "profiles", column: "brand_profile_id"
   add_foreign_key "meeting_responses", "meetings"
   add_foreign_key "meeting_responses", "profiles"
   add_foreign_key "meetings", "campaigns"
   add_foreign_key "profiles", "users", on_delete: :cascade
+  add_foreign_key "reports", "profiles", column: "reported_profile_id"
+  add_foreign_key "reports", "profiles", column: "reporter_profile_id"
   add_foreign_key "social_accounts", "profiles"
 end
