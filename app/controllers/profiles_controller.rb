@@ -8,14 +8,14 @@ class ProfilesController < ApplicationController
 
     render json: @profiles
   end
-
   def show
     profile = current_user.profile
 
     render json: profile.as_json(
       include: [:social_accounts, :categories]
     ).merge(
-      image_url: profile.image.attached? ? url_for(profile.image) : nil
+      image_url: profile.image.attached? ? url_for(profile.image) : nil,
+      user_role: current_user.role 
     )
   end
 

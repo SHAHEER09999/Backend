@@ -1,10 +1,17 @@
 Rails.application.routes.draw do
+  get "public_influencers/index"
+  get "public_influencers/filters"
   namespace :api do
     namespace :admin do
       resources :users, only: [:index, :destroy]
     end
   end
   resources :admin_user_managements
+  resources :public_influencers, only: [:index] do
+    collection do
+      get :filters
+    end
+  end
 
   devise_for :users, controllers: {
     sessions: 'users/sessions',
