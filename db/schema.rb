@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_15_215050) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_16_091254) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -88,6 +88,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_15_215050) do
     t.index ["profile_id"], name: "index_categories_on_profile_id"
   end
 
+  create_table "conversations", force: :cascade do |t|
+    t.bigint "brand_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "influencer_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["brand_id", "influencer_id"], name: "index_conversations_on_brand_id_and_influencer_id", unique: true
+    t.index ["brand_id"], name: "index_conversations_on_brand_id"
+    t.index ["influencer_id"], name: "index_conversations_on_influencer_id"
+  end
+
   create_table "feedbacks", force: :cascade do |t|
     t.bigint "brand_profile_id", null: false
     t.text "comment"
@@ -120,6 +130,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_15_215050) do
     t.text "notes"
     t.datetime "updated_at", null: false
     t.index ["campaign_id"], name: "index_meetings_on_campaign_id"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.text "content"
+    t.bigint "conversation_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "sender_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id"], name: "index_messages_on_conversation_id"
+    t.index ["sender_id"], name: "index_messages_on_sender_id"
   end
 
   create_table "profiles", force: :cascade do |t|
@@ -187,11 +207,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_15_215050) do
   add_foreign_key "campaign_applications", "profiles"
   add_foreign_key "campaigns", "profiles"
   add_foreign_key "categories", "profiles"
+  add_foreign_key "conversations", "users", column: "brand_id"
+  add_foreign_key "conversations", "users", column: "influencer_id"
   add_foreign_key "feedbacks", "profiles"
   add_foreign_key "feedbacks", "profiles", column: "brand_profile_id"
   add_foreign_key "meeting_responses", "meetings"
   add_foreign_key "meeting_responses", "profiles"
   add_foreign_key "meetings", "campaigns"
+  add_foreign_key "messages", "conversations"
+  add_foreign_key "messages", "users", column: "sender_id"
   add_foreign_key "profiles", "users", on_delete: :cascade
   add_foreign_key "reports", "profiles", column: "reported_profile_id"
   add_foreign_key "reports", "profiles", column: "reporter_profile_id"

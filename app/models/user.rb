@@ -5,6 +5,18 @@ class User < ApplicationRecord
 
   enum :role, [ :admin, :brand, :influencer ]
 
+  has_many :brand_conversations,
+          class_name: "Conversation",
+          foreign_key: :brand_id
+
+  has_many :influencer_conversations,
+          class_name: "Conversation",
+          foreign_key: :influencer_id
+
+  has_many :sent_messages,
+          class_name: "Message",
+          foreign_key: :sender_id
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,

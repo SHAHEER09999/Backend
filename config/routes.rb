@@ -11,6 +11,9 @@ Rails.application.routes.draw do
   end
   
   resources :admin_user_managements
+  resources :conversations, only: [:index, :show, :create] do
+    resources :messages, only: [:index, :create]
+  end
   
   # ✅ THIS BLOCK HANDLES EVERYTHING PERFECTLY:
   resources :public_influencers, only: [:index, :show] do
