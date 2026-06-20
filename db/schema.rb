@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_16_091254) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_16_175125) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -122,7 +122,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_091254) do
   end
 
   create_table "meetings", force: :cascade do |t|
-    t.bigint "campaign_id", null: false
+    t.bigint "campaign_id"
+    t.bigint "conversation_id"
     t.datetime "created_at", null: false
     t.datetime "date_time"
     t.string "location_link"
@@ -130,6 +131,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_091254) do
     t.text "notes"
     t.datetime "updated_at", null: false
     t.index ["campaign_id"], name: "index_meetings_on_campaign_id"
+    t.index ["conversation_id"], name: "index_meetings_on_conversation_id"
   end
 
   create_table "messages", force: :cascade do |t|
@@ -214,6 +216,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_091254) do
   add_foreign_key "meeting_responses", "meetings"
   add_foreign_key "meeting_responses", "profiles"
   add_foreign_key "meetings", "campaigns"
+  add_foreign_key "meetings", "conversations"
   add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "users", column: "sender_id"
   add_foreign_key "profiles", "users", on_delete: :cascade

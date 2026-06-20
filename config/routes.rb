@@ -1,7 +1,4 @@
 Rails.application.routes.draw do
-  # ❌ DELETE THESE TWO LINES:
-  # get "public_influencers/index"
-  # get "public_influencers/filters"
 
   namespace :api do
     namespace :admin do
@@ -50,6 +47,10 @@ Rails.application.routes.draw do
   end
   
   resources :meetings, only: [:index, :create, :destroy] do
+    collection do
+      get :chat_brands
+      post :create_chat_meeting
+    end
     post :respond, to: 'meeting_responses#respond'
   end
   
